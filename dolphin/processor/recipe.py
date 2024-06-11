@@ -250,9 +250,9 @@ class Recipe(object):
             if self._config.settings["fitting"]["sampler"] == "MCMC":
                 fitting_kwargs_list.append(
                     [
-                        "MCMC",
+                        "emcee",
                         {
-                            "sampler_type": self._sampler,
+                            #"sampler_type": self._sampler, # NH: this is no longer needed in the latest version of lenstronomy
                             "n_burn": self._config.settings["fitting"]["mcmc_settings"][
                                 "burnin_step"
                             ],
