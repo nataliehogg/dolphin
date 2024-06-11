@@ -362,7 +362,7 @@ class FileSystem(object):
                             for s in group[index]["param_list"][:]
                         ]
                     )
-                elif fitting_step[0] == "EMCEE":
+                elif fitting_step[0] == "emcee": # NH: changed case again
                     fitting_step.append(group[index]["samples"][:])
                     fitting_step.append(
                         [
