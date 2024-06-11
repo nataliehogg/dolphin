@@ -777,6 +777,14 @@ class ModelConfig(Config):
                 sigma.append({"gamma_ext": 0.05, "psi_ext": np.pi / 90.0})
                 lower.append({"gamma_ext": 0.0, "psi_ext": -np.pi})
                 upper.append({"gamma_ext": 0.5, "psi_ext": np.pi})
+                
+            elif model == "LOS_MINIMAL":
+                losmin_params = ['gamma1_od', 'gamma2_od', 'gamma1_los', 'gamma2_los', 'omega_los']
+                fixed.append({'kappa_od': 0.0, 'kappa_los': 0.0, 'omega_od': 0.0})
+                init.append({param: 0.0 for param in losmin_params})
+                sigma.append({param: 0.1 for param in losmin_params})
+                lower.append({param: -0.5 for param in losmin_params})
+                upper.append({param: 0.5 for param in losmin_params})
             else:
                 raise ValueError("{} not implemented as a lens " "model!".format(model))
 

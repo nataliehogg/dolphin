@@ -151,9 +151,11 @@ class Recipe(object):
         :rtype: `int`
         """
         lens_model_list = self._config.get_lens_model_list()
-        if "SHEAR_GAMMA_PSI" in lens_model_list or "SHEAR" in lens_model_list:
+        if "SHEAR_GAMMA_PSI" in lens_model_list or "SHEAR" in lens_model_list  or "LOS_MINIMAL" in lens_model_list:
             if "SHEAR_GAMMA_PSI" in lens_model_list:
                 index = lens_model_list.index("SHEAR_GAMMA_PSI")
+            elif "LOS_MINIMAL" in lens_model_list:
+                index = lens_model_list.index("LOS_MINIMAL")
             else:
                 index = lens_model_list.index("SHEAR")
         else:
