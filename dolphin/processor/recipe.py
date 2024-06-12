@@ -263,6 +263,10 @@ class Recipe(object):
                                 "mcmc_settings"
                             ]["walker_ratio"],
                             "threadCount": self._thread_count,
+                            # NH: adding ability to write samples to file
+                            # this implmentation currently requires you to write the full path to a .h5 file in your *_config.yml
+                            # under the mcmc_settings header
+                            "backend_filename": self._config.settings["fitting"]["mcmc_settings"]["backend_filename"]
                         },
                     ]
                 )
