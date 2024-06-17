@@ -459,12 +459,21 @@ class ModelConfig(Config):
                             num_pixel, num_pixel
                         )
 
-                        mask_outer = mask_util.mask_center_2d(
-                            self.deflector_center_ra + offset[0],
-                            self.deflector_center_dec + offset[1],
-                            radius,
+                        # mask_outer = mask_util.mask_center_2d(
+                        #     self.deflector_center_ra + offset[0],
+                        #     self.deflector_center_dec + offset[1],
+                        #     radius,
+                        #     util.image2array(x_coords),
+                        #     util.image2array(y_coords),
+                        # )
+
+                        ring_mask = mask_util.mask_shell(
                             util.image2array(x_coords),
                             util.image2array(y_coords),
+                            self.deflector_center_ra + offset[0],
+                            self.deflector_center_dec + offset[1],
+                            r_in = radius,
+                            r_out = 2.8
                         )
 
                         extra_masked_regions = []
@@ -485,7 +494,9 @@ class ModelConfig(Config):
                                         )
                                     )
 
-                        mask = 1.0 - mask_outer
+                        #mask = 1.0 - mask_outer
+
+                        mask = ring_mask # NH: ading the annular mask
 
                         for extra_region in extra_masked_regions:
                             mask *= extra_region
@@ -777,7 +788,7 @@ class ModelConfig(Config):
                 sigma.append({"gamma_ext": 0.05, "psi_ext": np.pi / 90.0})
                 lower.append({"gamma_ext": 0.0, "psi_ext": -np.pi})
                 upper.append({"gamma_ext": 0.5, "psi_ext": np.pi})
-                
+
             elif model == "LOS_MINIMAL":
                 losmin_params = ['gamma1_od', 'gamma2_od', 'gamma1_los', 'gamma2_los', 'omega_los']
                 fixed.append({'kappa_od': 0.0, 'kappa_los': 0.0, 'omega_od': 0.0})
