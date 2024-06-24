@@ -796,6 +796,14 @@ class ModelConfig(Config):
                 sigma.append({param: 0.1 for param in losmin_params})
                 lower.append({param: -0.5 for param in losmin_params})
                 upper.append({param: 0.5 for param in losmin_params})
+
+            elif model== "MULTIPOLE":
+                fixed.append({})
+                init.append({'a_m': 0.0, 'phi_m': 0.0, 'center_x': self.deflector_center_ra, 'center_y': self.deflector_center_dec})
+                sigma.append({'a_m': 0.1, 'phi_m': 0.1, 'center_x': 0.1, 'center_y': 0.1})
+                lower.append({'a_m': 0.0, 'phi_m': -np.pi, 'center_x': self.deflector_center_ra-self.deflector_centroid_bound, 'center_y': self.deflector_center_dec-self.deflector_centroid_bound})
+                upper.append({'a_m': 1.0, 'phi_m': np.pi, 'center_x': self.deflector_center_ra+self.deflector_centroid_bound, 'center_y': self.deflector_center_dec+self.deflector_centroid_bound})
+
             else:
                 raise ValueError("{} not implemented as a lens " "model!".format(model))
 
