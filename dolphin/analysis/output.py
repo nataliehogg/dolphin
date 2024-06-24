@@ -4,6 +4,7 @@ __author__ = "ajshajib"
 
 import numpy as np
 import matplotlib.pyplot as plt
+import cmasher as cmr
 
 from lenstronomy.Plots.model_plot import ModelPlot
 from lenstronomy.Sampling.parameters import Param
@@ -290,8 +291,8 @@ class Output(Processor):
             deltaPix_source=0.02,
             numPix=100,
             band_index=band_index,
-            v_max=v_max,
-            v_min=v_min,
+            v_max=v_max-1,
+            v_min=v_min-1,
         )
         if not show_source_light:
             model_plot.convergence_plot(
