@@ -829,7 +829,7 @@ class ModelConfig(Config):
                         "center_y": self.deflector_center_dec,
                         "e1": 0,
                         "e2": 0,
-                        "n_sersic": 4.0,
+                        #"n_sersic": 4.0,
                     }
                 )
                 sigma.append(
@@ -837,7 +837,7 @@ class ModelConfig(Config):
                         "center_x": np.max(self.pixel_size) / 10.0,
                         "center_y": np.max(self.pixel_size) / 10.0,
                         "R_sersic": 0.05,
-                        "n_sersic": 0.5,
+                        #"n_sersic": 0.5,
                         "e1": 0.01,
                         "e2": 0.01,
                     }
@@ -847,7 +847,7 @@ class ModelConfig(Config):
                     {
                         "e1": -0.5,
                         "e2": -0.5,
-                        "n_sersic": 0.5,
+                        #"n_sersic": 0.5,
                         "R_sersic": 0.1,
                         "center_x": self.deflector_center_ra
                         - self.deflector_centroid_bound,
@@ -860,7 +860,7 @@ class ModelConfig(Config):
                     {
                         "e1": 0.5,
                         "e2": 0.5,
-                        "n_sersic": 8.0,
+                        #"n_sersic": 8.0,
                         "R_sersic": 5.0,
                         "center_x": self.deflector_center_ra
                         + self.deflector_centroid_bound,
