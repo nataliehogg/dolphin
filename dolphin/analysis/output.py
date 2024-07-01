@@ -284,7 +284,7 @@ class Output(Processor):
             ax=axes[0, 1], band_index=band_index, v_max=v_max, v_min=v_min
         )
         model_plot.normalized_residual_plot(
-            ax=axes[0, 2], band_index=band_index, cmap=residual_cmap, v_max=3, v_min=-3
+            ax=axes[0, 2], band_index=band_index, cmap=residual_cmap, v_max=3, v_min=-3, text='Normalised residuals'
         )
         model_plot.source_plot(
             ax=axes[1, 0],
