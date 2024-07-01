@@ -314,6 +314,7 @@ class ModelConfig(Config):
         kwargs_ps=None,
         kwargs_special=None,
         kwargs_extinction=None,
+        kwargs_tracer_source=None
     ):
         """Add different types of custom log L funtions 1) Impose a tophat prior to
         limit the maximum allowed difference between orientation angle of the lens mass
