@@ -433,11 +433,17 @@ class ModelConfig(Config):
         """
         if "mask" in self.settings:
             if self.settings["mask"] is not None:
-                if (
-                    "provided" in self.settings["mask"]
-                    and self.settings["mask"]["provided"] is not None
-                ):
-                    return self.settings["mask"]["provided"]
+                if "provided" in self.settings["mask"] and self.settings["mask"]["provided"] is not None:
+
+                    masks = []
+
+                    provided_mask = np.genfromtxt(self.settings["mask"]["provided"])
+
+                    masks.append(provided_mask)
+
+                    return masks
+
+                    #return self.settings["mask"]["provided"]
                 else:
                     masks = []
                     mask_options = deepcopy(self.settings["mask"])
