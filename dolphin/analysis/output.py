@@ -139,7 +139,12 @@ class Output(Processor):
         self._kwargs_result = output["kwargs_result"]
         self._fit_output = output["fit_output"]
 
-        if self.fit_output[-1][0] == "EMCEE":
+        if lens_name == 'SDSSJ0728+3835':
+            self._model_settings['mask']['provided'] = '/home/nataliehogg/Documents/Projects/slacs/data/masks/SDSSJ0728+3835_F606W_mask.txt'
+        else:
+            pass
+
+        if self.fit_output[-1][0] == "EMCEE" or "emcee":
             self._samples_mcmc = self.fit_output[-1][1]
             self._params_mcmc = self.fit_output[-1][2]
 
@@ -293,6 +298,7 @@ class Output(Processor):
             band_index=band_index,
             v_max=v_max-1,
             v_min=v_min-1,
+            scale_size=0.5,
         )
         if not show_source_light:
             model_plot.convergence_plot(
