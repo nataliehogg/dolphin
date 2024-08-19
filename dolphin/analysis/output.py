@@ -123,7 +123,7 @@ class Output(Processor):
         callable."""
         raise NotImplementedError
 
-    def load_output(self, lens_name, model_id):
+    def load_output(self, lens_name, model_id, mask_path):
         """Load output from file and save in class variables.
 
         :param lens_name: lens name
@@ -139,10 +139,15 @@ class Output(Processor):
         self._kwargs_result = output["kwargs_result"]
         self._fit_output = output["fit_output"]
 
-        if lens_name == 'SDSSJ0728+3835':
-            self._model_settings['mask']['provided'] = '/home/nataliehogg/Documents/Projects/slacs/data/masks/SDSSJ0728+3835_F606W_mask.txt'
+        # if lens_name == 'SDSSJ0728+3835':
+        #     self._model_settings['mask']['provided'] = '/home/nataliehogg/Documents/Projects/slacs/data/masks/SDSSJ0728+3835_F606W_mask.txt'
+        # else:
+        #     pass
+
+        if mask_path is not None:
+            self._model_settings['mask']['provided'] = mask_path
         else:
-            pass
+            print('You must pass the path to the mask file.')
 
         if self.fit_output[-1][0] == "EMCEE" or "emcee":
             self._samples_mcmc = self.fit_output[-1][1]
@@ -154,6 +159,7 @@ class Output(Processor):
         self,
         lens_name,
         model_id=None,
+        mask_path=None,
         kwargs_result=None,
         band_index=0,
         data_cmap="cubehelix",
@@ -182,7 +188,7 @@ class Output(Processor):
             )
 
         if kwargs_result is None:
-            self.load_output(lens_name, model_id)
+            self.load_output(lens_name, model_id, mask_path)
             kwargs_result = self.kwargs_result
 
         multi_band_list_out = self.get_kwargs_data_joint(lens_name)["multi_band_list"]
@@ -209,6 +215,7 @@ class Output(Processor):
         self,
         lens_name,
         model_id=None,
+        mask_path = None,
         kwargs_result=None,
         band_index=0,
         data_cmap="cubehelix",
@@ -258,7 +265,7 @@ class Output(Processor):
         if print_results:
             print_kwargs_result = kwargs_result
             if kwargs_result is None:
-                print_kwargs_result = self.load_output(lens_name, model_id)[
+                print_kwargs_result = self.load_output(lens_name, model_id, mask_path)[
                     "kwargs_result"
                 ]
             print(print_kwargs_result)
@@ -267,6 +274,7 @@ class Output(Processor):
             model_plot, v_max = self.get_model_plot(
                 lens_name,
                 model_id=model_id,
+                mask_path=mask_path,
                 kwargs_result=kwargs_result,
                 band_index=band_index,
                 data_cmap=data_cmap,
@@ -275,6 +283,7 @@ class Output(Processor):
             model_plot = self.get_model_plot(
                 lens_name,
                 model_id=model_id,
+                mask_path=mask_path,
                 kwargs_result=kwargs_result,
                 band_index=band_index,
                 data_cmap=data_cmap,
