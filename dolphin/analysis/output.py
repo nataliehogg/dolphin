@@ -139,11 +139,6 @@ class Output(Processor):
         self._kwargs_result = output["kwargs_result"]
         self._fit_output = output["fit_output"]
 
-        # if lens_name == 'SDSSJ0728+3835':
-        #     self._model_settings['mask']['provided'] = '/home/nataliehogg/Documents/Projects/slacs/data/masks/SDSSJ0728+3835_F606W_mask.txt'
-        # else:
-        #     pass
-
         if mask_path is not None:
             self._model_settings['mask']['provided'] = mask_path
         else:
@@ -471,7 +466,7 @@ class Output(Processor):
         :return:
         :rtype:
         """
-        self.load_output(lens_name, model_id)
+        self.load_output(lens_name, model_id, mask_path=None) # NH: added mask path None
 
         num_params = self.num_params_mcmc  # self.samples_mcmc.shape[1]
         num_walkers = walker_ratio * num_params
