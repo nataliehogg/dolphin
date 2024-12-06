@@ -401,6 +401,7 @@ class ModelConfig(Config):
             q_light = ellipticity2phi_q(
                 kwargs_lens_light[0]["e1"], kwargs_lens_light[0]["e2"]
             )[1]
+
             if not np.isnan(max_diff):
                 q_mass = ellipticity2phi_q(kwargs_lens[0]["e1"], kwargs_lens[0]["e2"])[
                     1
@@ -409,8 +410,10 @@ class ModelConfig(Config):
                     kwargs_lens_light[0]["e1"], kwargs_lens_light[0]["e2"]
                 )[1]
                 diff = q_light - q_mass
+
                 if diff > max_diff:
                     prior += -((diff - max_diff) ** 2) / (1e-4)
+
 
         # Provide logarithmic_prior on the source light profile beta param
         if (
@@ -810,6 +813,61 @@ class ModelConfig(Config):
                 sigma.append({param: 0.1 for param in losmin_params})
                 lower.append({param: -0.5 for param in losmin_params})
                 upper.append({param: 0.5 for param in losmin_params})
+
+            elif model == "EPL_BOXYDISKY":
+                fixed.append({})
+                init.append(
+                    {
+                        "center_x": self.deflector_center_ra,
+                        "center_y": self.deflector_center_dec,
+                        "e1": 0.0,
+                        "e2": 0.0,
+                        "gamma": 2.0,
+                        "theta_E": 1.0,
+                        'a4_a': 0.0,
+                    }
+                )
+
+                sigma.append(
+                    {
+                        "theta_E": 0.1,
+                        "e1": 0.01,
+                        "e2": 0.01,
+                        "gamma": 0.02,
+                        "center_x": 0.1,
+                        "center_y": 0.1,
+                        'a4_a': 0.1,
+                    }
+                )
+
+                lower.append(
+                    {
+                        "theta_E": 0.3,
+                        "e1": -0.5,
+                        "e2": -0.5,
+                        "gamma": 1.3,
+                        "center_x": self.deflector_center_ra
+                        - self.deflector_centroid_bound,
+                        "center_y": self.deflector_center_dec
+                        - self.deflector_centroid_bound,
+                        'a4_a': -0.1,
+                    }
+                )
+
+                upper.append(
+                    {
+                        "theta_E": 3.0,
+                        "e1": 0.5,
+                        "e2": 0.5,
+                        "gamma": 2.8,
+                        "center_x": self.deflector_center_ra
+                        + self.deflector_centroid_bound,
+                        "center_y": self.deflector_center_dec
+                        + self.deflector_centroid_bound,
+                        'a4_a': 0.1,
+                    }
+                )
+
 
             elif model== "MULTIPOLE":
                 fixed.append({})
