@@ -67,11 +67,12 @@ class Processor(object):
             )
             sys.stdout = log_file
 
-        config = self.get_lens_config(lens_name)
+        print(lens_name)
+        config = self.get_lens_config(model_id, lens_name) # NH: model_id added
         recipe = Recipe(config, sampler=sampler, thread_count=thread_count)
 
         psf_supersampling_factor = config.get_psf_supersampled_factor()
-        kwargs_data_joint = self.get_kwargs_data_joint(
+        kwargs_data_joint = self.get_kwargs_data_joint(model_id, #NH: added model_id
             lens_name, psf_supersampled_factor=psf_supersampling_factor
         )
 
@@ -102,7 +103,7 @@ class Processor(object):
         if log and pool.is_master():
             log_file.close()
 
-    def get_lens_config(self, lens_name):
+    def get_lens_config(self, model_id, lens_name): # NH: model_id added
         """Get the `ModelConfig` object for a lens.
 
         :param lens_name: lens name
@@ -110,9 +111,9 @@ class Processor(object):
         :return: `ModelConfig` instance
         :rtype:
         """
-        return ModelConfig(self.file_system.get_config_file_path(lens_name))
+        return ModelConfig(self.file_system.get_config_file_path(model_id, lens_name))
 
-    def get_kwargs_data_joint(self, lens_name, psf_supersampled_factor=1):
+    def get_kwargs_data_joint(self, model_id, lens_name, psf_supersampled_factor=1):
         """Create `kwargs_data` for a lens and given filters.
 
         :param lens_name: lens name
@@ -122,7 +123,7 @@ class Processor(object):
         :return:
         :rtype:
         """
-        config = self.get_lens_config(lens_name)
+        config = self.get_lens_config(model_id, lens_name)
 
         bands = config.settings["band"]
 

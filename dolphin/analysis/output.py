@@ -148,6 +148,14 @@ class Output(Processor):
             self._samples_mcmc = self.fit_output[-1][1]
             self._params_mcmc = self.fit_output[-1][2]
 
+        elif self.fit_output[-1][0] == 'zeus':
+            self._samples_mcmc = self.fit_output[-1][1]
+            self._params_mcmc = self.fit_output[-1][2]
+
+        elif self.fit_output[-1][0] == 'Cobaya':
+            self._samples_mcmc = self.fit_output[-1][1]
+            self._params_mcmc = self.fit_output[-1][2]
+
         return output
 
     def get_model_plot(
@@ -186,12 +194,12 @@ class Output(Processor):
             self.load_output(lens_name, model_id, mask_path)
             kwargs_result = self.kwargs_result
 
-        multi_band_list_out = self.get_kwargs_data_joint(lens_name)["multi_band_list"]
-
         config = ModelConfig(settings=self.model_settings)
 
         mask = config.get_masks()
         kwargs_model = config.get_kwargs_model()
+
+        multi_band_list_out = self.get_kwargs_data_joint(model_id, lens_name)["multi_band_list"]
 
         v_max = np.log10(multi_band_list_out[band_index][0]["image_data"].max())
 
@@ -204,7 +212,10 @@ class Output(Processor):
             image_likelihood_mask_list=mask,
             multi_band_type="multi-linear",
         )
-        return model_plot, v_max
+
+        chi2 = model_plot.single_band_chi2(band_index=0)
+
+        return model_plot, v_max, chi2
 
     def plot_model_overview(
         self,
@@ -327,6 +338,101 @@ class Output(Processor):
                 v_max=v_max,
                 v_min=v_min,
             )
+        fig.tight_layout()
+        fig.subplots_adjust(
+            left=None, bottom=None, right=None, top=None, wspace=0.0, hspace=0.05
+        )
+
+        return fig
+
+    def three_panel_model_plot(
+        self,
+        lens_name,
+        model_id=None,
+        mask_path = None,
+        kwargs_result=None,
+        band_index=0,
+        data_cmap="cubehelix",
+        residual_cmap="RdBu_r",
+        convergence_cmap="afmhot",
+        magnification_cmap="viridis",
+        v_min=None,
+        v_max=None,
+        print_results=False,
+        show_source_light=False,
+    ):
+        """Plot the model and residual. Either `model_id` or `kwargs_result` needs to be
+        provided. `kwargs_result` is prioritized for plotting if both are provided.
+
+        :param lens_name: name of the lens
+        :type lens_name: `str`
+        :param model_id: model run identifier
+        :type model_id: `str`
+        :param kwargs_result: lenstronomy `kwargs_result` dictionary. If
+            provided, it will be used to plot the model, otherwise the model
+            will be plotted from the saved/loaded outputs for `lens_name` and
+            `model_id`.
+        :type kwargs_result: `dict`
+        :param band_index: index of band to plot for multi-band case
+        :type band_index: `int`
+        :param data_cmap: colormap for image, reconstruction, and source plots
+        :type data_cmap: `str` or `matplotlib.colors.Colormap`
+        :param residual_cmap: colormap for noise residual plot
+        :type residual_cmap: `str` or `matplotlib.colors.Colormap`
+        :param convergence_cmap: colormap for convergence plot
+        :type convergence_cmap: `str` or `matplotlib.colors.Colormap`
+        :param magnification_cmap: colormap for magnification plot
+        :type magnification_cmap: `str` or `matplotlib.colors.Colormap`
+        :param v_min: minimum plotting scale for the model, data, & source plot
+        :type v_min: `float` or `int`
+        :param v_max: maximum plotting scale for the model, data, & source plot
+        :type v_max: `float` or `int`
+        :param show_source_light: if true, replaces convergence plot with
+            source light convolved lens decomposition plot and also replaces
+            the magnification plot with the source-light subtracted data
+            plot
+        :type show_source_light: `bool`
+        :return: `matplotlib.pyplot.figure` instance with the plots
+        :rtype: `matplotlib.pyplot.figure`
+        """
+        if print_results:
+            print_kwargs_result = kwargs_result
+            if kwargs_result is None:
+                print_kwargs_result = self.load_output(lens_name, model_id, mask_path)[
+                    "kwargs_result"
+                ]
+            print(print_kwargs_result)
+
+        if v_max is None:
+            model_plot, v_max = self.get_model_plot(
+                lens_name,
+                model_id=model_id,
+                mask_path=mask_path,
+                kwargs_result=kwargs_result,
+                band_index=band_index,
+                data_cmap=data_cmap,
+            )
+        else:
+            model_plot = self.get_model_plot(
+                lens_name,
+                model_id=model_id,
+                mask_path=mask_path,
+                kwargs_result=kwargs_result,
+                band_index=band_index,
+                data_cmap=data_cmap,
+            )[0]
+
+        fig, axes = plt.subplots(1, 3, figsize=(16, 4))
+
+        model_plot.data_plot(
+            ax=axes[0], band_index=band_index, v_max=v_max, v_min=v_min
+        )
+        model_plot.model_plot(
+            ax=axes[1], band_index=band_index, v_max=v_max, v_min=v_min
+        )
+        model_plot.normalized_residual_plot(
+            ax=axes[2], band_index=band_index, cmap=residual_cmap, v_max=3, v_min=-3, text='Normalised residuals'
+        )
         fig.tight_layout()
         fig.subplots_adjust(
             left=None, bottom=None, right=None, top=None, wspace=0.0, hspace=0.05

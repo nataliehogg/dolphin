@@ -54,7 +54,7 @@ class FileSystem(object):
 
         return lens_list
 
-    def get_config_file_path(self, lens_name):
+    def get_config_file_path(self, model_id, lens_name):
         """Get the file path to the config file for `lens_name`.
 
         :param lens_name: lens name
@@ -63,7 +63,7 @@ class FileSystem(object):
         :rtype: `str`
         """
         return self.path2str(
-            self._root_path / "settings" / "{}_config.yml".format(lens_name)
+            self._root_path / "{}_settings".format(model_id) / "{}_config.yml".format(lens_name)
         )
 
     def get_logs_directory(self):
@@ -279,6 +279,22 @@ class FileSystem(object):
                             single_output[3],
                         ),
                     )
+                elif single_output[0] == "zeus": # NH: changed to lowercase
+                    subgroup.create_dataset(
+                        "samples",
+                        data=np.array(
+                            single_output[1],
+                        ),
+                    )
+                    subgroup.create_dataset(
+                        "param_list", data=np.array(single_output[2], dtype="S25")
+                    )
+                    subgroup.create_dataset(
+                        "log_likelihood",
+                        data=np.array(
+                            single_output[3],
+                        ),
+                    )
                 else:
                     raise ValueError(
                         "Fitting type {} not recognized for "
@@ -363,6 +379,26 @@ class FileSystem(object):
                         ]
                     )
                 elif fitting_step[0] == "emcee": # NH: changed case again
+                    fitting_step.append(group[index]["samples"][:])
+                    fitting_step.append(
+                        [
+                            str(s, encoding="utf-8")
+                            for s in group[index]["param_list"][:]
+                        ]
+                    )
+                    fitting_step.append(group[index]["log_likelihood"][:])
+
+                elif fitting_step[0] == "zeus": # NH: changed case again
+                    fitting_step.append(group[index]["samples"][:])
+                    fitting_step.append(
+                        [
+                            str(s, encoding="utf-8")
+                            for s in group[index]["param_list"][:]
+                        ]
+                    )
+                    fitting_step.append(group[index]["log_likelihood"][:])
+
+                elif fitting_step[0] == "Cobaya": # NH: changed case again
                     fitting_step.append(group[index]["samples"][:])
                     fitting_step.append(
                         [

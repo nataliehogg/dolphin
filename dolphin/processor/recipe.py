@@ -287,6 +287,60 @@ class Recipe(object):
                         )
 
                         fitting_kwargs_list[-1][1]["re_use_samples"] = True
+            elif self._config.settings['fitting']['sampler'] == 'nautilus':
+                fitting_kwargs_list.append(
+                    [
+                        "Nautilus",
+                        {
+                            "n_live": self._config.settings["fitting"]["mcmc_settings"][
+                                "n_live"
+                            ],
+                            "verbose": self._config.settings['fitting']['mcmc_settings'][
+                                'verbose'
+                            ]
+                        },
+                    ]
+                )
+
+            elif self._config.settings['fitting']['sampler'] == 'zeus':
+                fitting_kwargs_list.append(
+                    [
+                        "zeus",
+                        {
+                            #"sampler_type": self._sampler, # NH: this is no longer needed in the latest version of lenstronomy
+                            "n_burn": self._config.settings["fitting"]["mcmc_settings"][
+                                "burnin_step"
+                            ],
+                            "n_run": self._config.settings["fitting"]["mcmc_settings"][
+                                "iteration_step"
+                            ],
+                            "walkerRatio": self._config.settings["fitting"][
+                                "mcmc_settings"
+                            ]["walker_ratio"],
+                            # NH: adding ability to write samples to file
+                            # this implmentation currently requires you to write the full path to a .h5 file in your *_config.yml
+                            # under the mcmc_settings header
+                            #"backend_filename": self._config.settings["fitting"]["mcmc_settings"]["backend_filename"]
+                        },
+                    ]
+                )
+            elif self._config.settings['fitting']['sampler'] == 'Cobaya':
+                fitting_kwargs_list.append(
+                    [
+                        "Cobaya",
+                        {
+                            "proposal_widths": self._config.settings["fitting"]["mcmc_settings"][
+                                "proposals"
+                            ]*22, # same proposal width for all params
+                            "Rminus1_stop": self._config.settings["fitting"]["mcmc_settings"][
+                                "Rminus1_stop"
+                            ],
+                            "Rminus1_cl_stop": self._config.settings["fitting"]["mcmc_settings"][
+                                "Rminus1_cl_stop"
+                            ],
+                        },
+                    ]
+                )
             else:
                 raise ValueError(
                     "{} sampler not implemented yet!".format(
@@ -390,7 +444,6 @@ class Recipe(object):
                     fitting_kwargs_list += [
                         ["update_settings", {"lens_add_fixed": param_list}]
                     ]
-
                 # optimize for the source only
                 fitting_kwargs_list += [
                     # self.fix_params('lens'),
@@ -463,14 +516,24 @@ class Recipe(object):
                             "threadCount": self._thread_count,
                         },
                     ],
+                    self.unfix_params("lens"), # NH: adding the below as a PSO step for the shears
+                    [
+                        "PSO",
+                        {
+                            "sigma_scale": 1.0,
+                            "n_particles": self._pso_num_particle,
+                            "n_iterations": self._pso_num_iteration,
+                            "threadCount": self._thread_count,
+                        },
+                    ], #  NH: up to here
                 ]
-
                 # finally, relax shear parameters for MCMC later
                 # disjoin lens and lens light centroids
                 fitting_kwargs_list += [
-                    self.unfix_params("lens"),
+                    # self.unfix_params("lens"), # NH: commenting this out and adding a PSO step for the shears above
                     ["update_settings", {"kwargs_constraints": temp_constraints}],
                 ]
+
 
             # fitting_kwargs_list += self.get_default_recipe()
 
