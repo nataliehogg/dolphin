@@ -780,8 +780,8 @@ class ModelConfig(Config):
                 lower.append(
                     {
                         "theta_E": 0.3,
-                        "e1": -tight,
-                        "e2": -tight,
+                        "e1": -loose,
+                        "e2": -loose,
                         "gamma": 1.3,
                         "center_x": self.deflector_center_ra
                         - self.deflector_centroid_bound,
@@ -793,8 +793,8 @@ class ModelConfig(Config):
                 upper.append(
                     {
                         "theta_E": 3.0,
-                        "e1": tight, 
-                        "e2": tight,
+                        "e1": loose, 
+                        "e2": loose,
                         "gamma": 2.8,
                         "center_x": self.deflector_center_ra
                         + self.deflector_centroid_bound,
@@ -815,8 +815,8 @@ class ModelConfig(Config):
                 fixed.append({'kappa_od': 0.0, 'kappa_los': 0.0, 'omega_od': 0.0})
                 init.append({param: 0.0 for param in losmin_params})
                 sigma.append({param: 0.01 for param in losmin_params}) # 0.1
-                lower.append({param: -tight for param in losmin_params}) #-0.5
-                upper.append({param: tight for param in losmin_params}) # 0.5
+                lower.append({param: -loose for param in losmin_params}) #-0.5
+                upper.append({param: loose for param in losmin_params}) # 0.5
 
             elif model == "EPL_BOXYDISKY":
                 fixed.append({})
