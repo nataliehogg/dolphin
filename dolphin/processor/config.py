@@ -781,8 +781,8 @@ class ModelConfig(Config):
                 lower.append(
                     {
                         "theta_E": 0.3,
-                        "e1": -medium_tight,
-                        "e2": -medium_tight,
+                        "e1": -loose,
+                        "e2": -loose,
                         "gamma": 1.3,
                         "center_x": self.deflector_center_ra
                         - self.deflector_centroid_bound,
@@ -794,8 +794,8 @@ class ModelConfig(Config):
                 upper.append(
                     {
                         "theta_E": 3.0,
-                        "e1": medium_tight, 
-                        "e2": medium_tight,
+                        "e1": loose, 
+                        "e2": loose,
                         "gamma": 2.8,
                         "center_x": self.deflector_center_ra
                         + self.deflector_centroid_bound,
