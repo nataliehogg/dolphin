@@ -426,7 +426,8 @@ class ModelConfig(Config):
             ]
             if setting_input3:
                 for i, model in enumerate(self.settings["model"]["source_light"]):
-                    if model == "SHAPELETS":
+                    # if model == "SHAPELETS":
+                    if model in ("SHAPELETS", "SHAPELETS_POLAR_EXP"): # NHmod
                         beta = kwargs_source[i]["beta"]
                         prior += -np.log(beta)
 
@@ -1038,7 +1039,8 @@ class ModelConfig(Config):
                         "e2": 0.5,
                     }
                 )
-            elif model == "SHAPELETS":
+            # elif model == "SHAPELETS":
+            elif model in ("SHAPELETS", "SHAPELETS_POLAR_EXP"):
                 fixed.append(
                     {
                         "n_max": self.settings["source_light_option"]["n_max"][

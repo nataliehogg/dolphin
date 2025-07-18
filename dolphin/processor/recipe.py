@@ -170,6 +170,8 @@ class Recipe(object):
         source_model_list = self._config.get_source_light_model_list()
         if "SHAPELETS" in source_model_list:
             index = source_model_list.index("SHAPELETS")
+        elif "SHAPELETS_POLAR_EXP" in source_model_list:
+            index = source_model_list.index("SHAPELETS_POLAR_EXP")
         else:
             index = None
 
